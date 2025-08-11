@@ -1,0 +1,22 @@
+{
+  "name": "general-qa-tasks",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marynahorova/general-qa-tasks.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marynahorova/general-qa-tasks/issues"
+  },
+  "homepage": "https://github.com/marynahorova/general-qa-tasks#readme",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^24.2.0"
+  }
+}
