@@ -46,9 +46,14 @@ export class WaitConditionsPage extends AppPage {
   async setMinMaxValues(min: number, max: number) {
     await this.minWaitInput.fill(min.toString());
     await this.maxWaitInput.fill(max.toString());
+  }
+  async getMinMaxValues() {
+    await this.minWaitInput.waitFor();
 
-    await expect(this.minWaitInput).toHaveValue(min.toString());
-    await expect(this.maxWaitInput).toHaveValue(max.toString());
+    const minValue = await this.minWaitInput.inputValue();
+    const maxValue = await this.maxWaitInput.inputValue();
+
+    return { minValue, maxValue };
   }
 
   async triggerAlert() {
@@ -84,7 +89,7 @@ export class WaitConditionsPage extends AppPage {
   }
 
   async verifyPopup() {
-    await this.shownHiddenTxt.waitFor({ state: "visible" });
+    await this.shownHiddenTxt.waitFor();
   }
 
   async triggerInvisibleElement() {
@@ -120,11 +125,14 @@ export class WaitConditionsPage extends AppPage {
     await this.triggerTextValueBtn.click();
   }
 
-  async verifyInputAndBtnCaption() {
-    await expect(this.inputText).toHaveValue("Dennis Ritchie", {
-      timeout: 4000,
-    });
-    expect(this.submitBtn).toBeVisible();
+  async getInputValue(expected: string): Promise<string> {
+    await this.inputText.waitFor();
+    await expect(this.inputText).toHaveValue(expected, { timeout: 5000 });
+    return await this.inputText.inputValue();
+  }
+
+  async verifyBtnCaption() {
+    await expect(this.submitBtn).toBeVisible();
   }
 
   async triggerFrame() {

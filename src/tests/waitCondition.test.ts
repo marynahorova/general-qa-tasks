@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import { WaitConditionsPage } from "../app/pages/waitConditions.page";
 
 test.describe("Wait Condition Tests", () => {
@@ -8,6 +8,11 @@ test.describe("Wait Condition Tests", () => {
     waitConditions = new WaitConditionsPage(page);
     await waitConditions.open();
     await waitConditions.setMinMaxValues(2, 4);
+  });
+
+  test("check min/max values are set correctly", async () => {
+    const minMaxValues = await waitConditions.getMinMaxValues();
+    expect(minMaxValues).toStrictEqual({ minValue: "2", maxValue: "4" });
   });
 
   test("check triggering alert", async ({ page }) => {
@@ -58,9 +63,10 @@ test.describe("Wait Condition Tests", () => {
 
   test("check text/value to have specific values", async () => {
     await waitConditions.triggerTextInput();
-    await waitConditions.verifyInputAndBtnCaption();
+    const value = await waitConditions.getInputValue("Dennis Ritchie");
+    expect(value).toBe("Dennis Ritchie");
+    await waitConditions.verifyBtnCaption();
   });
-
   test("check triggering frame", async () => {
     await waitConditions.triggerFrame();
     await waitConditions.verifyFrameAndBtn();

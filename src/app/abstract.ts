@@ -6,15 +6,6 @@ export abstract class PageHolder {
 
 export abstract class Component extends PageHolder {
   abstract expectLoaded(): Promise<void>;
-
-  async isLoaded(): Promise<boolean> {
-    try {
-      await this.expectLoaded();
-      return true;
-    } catch {
-      return false;
-    }
-  }
 }
 
 export abstract class AppPage extends Component {
