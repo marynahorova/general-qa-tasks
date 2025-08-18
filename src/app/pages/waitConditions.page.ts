@@ -125,10 +125,19 @@ export class WaitConditionsPage extends AppPage {
     await this.triggerTextValueBtn.click();
   }
 
-  async getInputValue(expected: string): Promise<string> {
-    await this.inputText.waitFor();
-    await expect(this.inputText).toHaveValue(expected, { timeout: 5000 });
-    return await this.inputText.inputValue();
+  async getInputValue(expected: string, timeout = 5000): Promise<string> {
+    await this.inputText.waitFor({ state: "attached", timeout });
+
+    const handle = await this.inputText.elementHandle();
+    if (!handle) throw new Error("Input element is not attached to the DOM");
+
+    await this.page.waitForFunction(
+      ({ el, val }) => (el as HTMLInputElement).value.trim() === val,
+      { el: handle, val: expected },
+      { timeout, polling: "raf" }
+    );
+
+    return this.inputText.inputValue();
   }
 
   async verifyBtnCaption() {
