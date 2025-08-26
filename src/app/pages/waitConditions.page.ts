@@ -1,8 +1,10 @@
 import { expect } from "@playwright/test";
 import { AppPage } from "../abstract";
+import { PopupComponent } from "../components/popupWindow";
 
 export class WaitConditionsPage extends AppPage {
   public pagePath: string = "/expected_conditions.html";
+  public popup = new PopupComponent(this.page);
 
   //For Trigger
   private minWaitInput = this.page.locator("#min_wait");
@@ -38,6 +40,7 @@ export class WaitConditionsPage extends AppPage {
   private innerBtn = this.frame.getByText("Inner Button");
   private innerBtnClicked = this.frame.getByText("Clicked");
 
+  //Wait Conditions methods
   async expectLoaded(): Promise<void> {
     await expect(this.minWaitInput).toBeVisible();
     await expect(this.maxWaitInput).toBeVisible();
@@ -152,5 +155,17 @@ export class WaitConditionsPage extends AppPage {
     await expect(this.frameLocator).toBeVisible();
     await this.innerBtn.click();
     await expect(this.innerBtnClicked).toBeVisible();
+  }
+
+  // Popup methods
+  async openPopup() {
+    await this.page.goto("/multi_window.html"); //Imagine it is popup according to the task requirements
+  }
+
+  async verifyPopupOpened() {
+    await this.popup.expectLoaded();
+  }
+  async clickBtnOnPopup() {
+    await this.popup.openWindowBtn1Click();
   }
 }
