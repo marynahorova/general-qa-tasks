@@ -109,7 +109,7 @@ export class FormsPage extends AppPage {
     await this.selectLang(language).click();
   }
 
-  async verifyLanguage(language: string) {
+  async verifyLanguageText(language: string) {
     await expect(this.langValidate).toContainText(language, {
       ignoreCase: true,
     });
@@ -140,7 +140,7 @@ export class FormsPage extends AppPage {
     await this.slider.fill(String(value));
   }
 
-  async verifySliderValue(value: number | string) {
+  async verifySliderText(value: number | string) {
     await expect(this.sliderValidate).toHaveText(String(value));
   }
 

@@ -65,7 +65,7 @@ test.describe("Forms/Inputs tests", () => {
   test("check selecting language in the listbox", async () => {
     for (const lang of Object.values(LANGUAGES)) {
       await formsPage.selectLanguage(lang);
-      await formsPage.verifyLanguage(lang);
+      await formsPage.verifyLanguageText(lang);
     }
   });
 
@@ -89,7 +89,7 @@ test.describe("Forms/Inputs tests", () => {
   test("check slider different values", async () => {
     for (let value = 0; value <= 5; value++) {
       await formsPage.setSliderText(value);
-      await formsPage.verifySliderValue(value);
+      await formsPage.verifySliderText(value);
     }
   });
 
