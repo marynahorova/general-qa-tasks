@@ -1,3 +1,9 @@
+import {
+  cases,
+  FORM_FIELDS,
+  LANGUAGES,
+  TEST_FILES,
+} from "../app/constants/testData";
 import { FormsPage } from "../app/pages/forms.page";
 import { test } from "@playwright/test";
 
@@ -15,26 +21,26 @@ test.describe("Forms/Inputs tests", () => {
   });
 
   test("check disabled checkbox", async () => {
-    await formsPage.verifyDisabledCheckBox("Java");
+    await formsPage.verifyCheckBoxState(LANGUAGES.JAVA, { isEnabled: false });
   });
 
   test("check selecting only Python checkbox", async () => {
-    await formsPage.checkLang("Python");
-    await formsPage.verifyLangUnchecked("JavaScript");
-    await formsPage.verifyLangChecked("Python");
+    await formsPage.checkLang(LANGUAGES.PYTHON);
+    await formsPage.verifyLangUnchecked(LANGUAGES.JAVASCRIPT);
+    await formsPage.verifyLangCheckedAndText(LANGUAGES.PYTHON);
   });
 
   test("check selecting only JavaScript checkbox", async () => {
-    await formsPage.checkLang("JavaScript");
-    await formsPage.verifyLangUnchecked("Python");
-    await formsPage.verifyLangChecked("JavaScript");
+    await formsPage.checkLang(LANGUAGES.JAVASCRIPT);
+    await formsPage.verifyLangUnchecked(LANGUAGES.PYTHON);
+    await formsPage.verifyLangCheckedAndText(LANGUAGES.JAVASCRIPT);
   });
 
   test("check selecting two languages", async () => {
-    await formsPage.checkLang("Python");
-    await formsPage.checkLang("JavaScript");
-    await formsPage.verifyLangChecked("Python");
-    await formsPage.verifyLangChecked("JavaScript");
+    await formsPage.checkLang(LANGUAGES.PYTHON);
+    await formsPage.checkLang(LANGUAGES.JAVASCRIPT);
+    await formsPage.verifyLangCheckedAndText(LANGUAGES.PYTHON);
+    await formsPage.verifyLangCheckedAndText(LANGUAGES.JAVASCRIPT);
   });
 
   test("check selecting radio btn", async () => {
@@ -50,23 +56,16 @@ test.describe("Forms/Inputs tests", () => {
   });
 
   test("check selecting primary skill", async () => {
-    const cases = [
-      { skill: "Selenium", value: "sel" },
-      { skill: "Protractor", value: "pro" },
-      { skill: "Cypress", value: "cyp" },
-    ];
-
     for (const { skill, value } of cases) {
       await formsPage.selectPrimarySkill(skill);
-      await formsPage.verifyPrimarySkill(value);
+      await formsPage.verifyPrimarySkillText(value);
     }
   });
 
   test("check selecting language in the listbox", async () => {
-    const variants = ["Java", "Python", "JavaScript", "TypeScript"];
-    for (const langVar of variants) {
-      await formsPage.selectLanguage(langVar);
-      await formsPage.verifyLanguage(langVar);
+    for (const lang of Object.values(LANGUAGES)) {
+      await formsPage.selectLanguage(lang);
+      await formsPage.verifyLanguage(lang);
     }
   });
 
@@ -80,28 +79,33 @@ test.describe("Forms/Inputs tests", () => {
   });
 
   test("check speak german toggle", async () => {
-    await formsPage.verifyToggle("");
+    await formsPage.verifyToggleText("");
     await formsPage.clickToggle();
-    await formsPage.verifyToggle("true");
+    await formsPage.verifyToggleText("true");
     await formsPage.clickToggle();
-    await formsPage.verifyToggle("false");
+    await formsPage.verifyToggleText("false");
   });
 
   test("check slider different values", async () => {
     for (let value = 0; value <= 5; value++) {
-      await formsPage.setSliderValue(value);
+      await formsPage.setSliderText(value);
       await formsPage.verifySliderValue(value);
     }
   });
 
   test("check uploading CV", async () => {
-    await formsPage.uploadCvFile("cv.txt");
-    await formsPage.verifyCvUpload("cv.txt");
+    await formsPage.uploadCvFile(TEST_FILES.CV);
+    await formsPage.verifyCvUpload(TEST_FILES.CV);
   });
 
   test("check uploading multiple files", async () => {
-    await formsPage.uploadMultipleFiles(["cv.txt", "certificate.pdf"]);
-    await formsPage.verifyFilesUpload("cv.txt certificate.pdf");
+    await formsPage.uploadMultipleFiles([
+      TEST_FILES.CV,
+      TEST_FILES.CERTIFICATE,
+    ]);
+    await formsPage.verifyFilesUpload(
+      `${TEST_FILES.CV} ${TEST_FILES.CERTIFICATE}`
+    );
   });
 
   test("check file downloading", async () => {
@@ -111,15 +115,23 @@ test.describe("Forms/Inputs tests", () => {
   });
 
   test("check disabled textbox", async () => {
-    await formsPage.verifyDisabledTextbox();
+    await formsPage.verifyTextboxState({ isEnabled: false });
   });
 
   test("check validation errors after submitting empty form", async () => {
     await formsPage.submitClick();
-    await formsPage.verifyValidationErrors("city");
-    await formsPage.verifyValidationErrors("state");
-    await formsPage.verifyValidationErrors("zip");
-    await formsPage.verifyValidationErrors("terms");
+    await formsPage.verifyValidationErrors(FORM_FIELDS.CITY, {
+      isVisible: true,
+    });
+    await formsPage.verifyValidationErrors(FORM_FIELDS.STATE, {
+      isVisible: true,
+    });
+    await formsPage.verifyValidationErrors(FORM_FIELDS.ZIP, {
+      isVisible: true,
+    });
+    await formsPage.verifyValidationErrors(FORM_FIELDS.TERMS, {
+      isVisible: true,
+    });
   });
 
   test("check submitting form with all fields", async () => {
@@ -128,9 +140,17 @@ test.describe("Forms/Inputs tests", () => {
     await formsPage.fillZip(123);
     await formsPage.agreeTerms();
     await formsPage.submitClick();
-    await formsPage.verifyNoValidationErrors("city");
-    await formsPage.verifyNoValidationErrors("state");
-    await formsPage.verifyNoValidationErrors("zip");
-    await formsPage.verifyNoValidationErrors("terms");
+    await formsPage.verifyValidationErrors(FORM_FIELDS.CITY, {
+      isVisible: false,
+    });
+    await formsPage.verifyValidationErrors(FORM_FIELDS.STATE, {
+      isVisible: false,
+    });
+    await formsPage.verifyValidationErrors(FORM_FIELDS.ZIP, {
+      isVisible: false,
+    });
+    await formsPage.verifyValidationErrors(FORM_FIELDS.TERMS, {
+      isVisible: false,
+    });
   });
 });

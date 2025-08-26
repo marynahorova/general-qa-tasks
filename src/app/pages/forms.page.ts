@@ -59,16 +59,20 @@ export class FormsPage extends AppPage {
     await expect(this.experienceText).toHaveText(String(text));
   }
 
-  async verifyDisabledCheckBox(lang: string) {
+  async verifyCheckBoxState(lang: string, option: { isEnabled: boolean }) {
+    if (option.isEnabled) {
+      await expect(this.langCheckbox(lang)).toBeEnabled();
+    } else {
+      await expect(this.langCheckbox(lang)).toBeDisabled();
+    }
     await expect(this.langCheckbox(lang)).toBeVisible();
-    await expect(this.langCheckbox(lang)).toBeDisabled();
   }
 
   async checkLang(lang: string) {
     await this.langCheckbox(lang).check();
   }
 
-  async verifyLangChecked(lang: string) {
+  async verifyLangCheckedAndText(lang: string) {
     await expect(this.langCheckbox(lang)).toBeChecked();
     await expect(this.langText).toContainText(lang, { ignoreCase: true });
   }
@@ -95,7 +99,7 @@ export class FormsPage extends AppPage {
     await this.primarySkill.selectOption(skill);
   }
 
-  async verifyPrimarySkill(skill: string) {
+  async verifyPrimarySkillText(skill: string) {
     await expect(this.primarySkillText).toContainText(skill, {
       ignoreCase: true,
     });
@@ -128,11 +132,11 @@ export class FormsPage extends AppPage {
     await this.speaksGermanToggle.click();
   }
 
-  async verifyToggle(text: string) {
+  async verifyToggleText(text: string) {
     await expect(this.speaksGermanValidate).toHaveText(text);
   }
 
-  async setSliderValue(value: number | string) {
+  async setSliderText(value: number | string) {
     await this.slider.fill(String(value));
   }
 
@@ -159,6 +163,7 @@ export class FormsPage extends AppPage {
 
   async verifyFilesUpload(filesNames: string) {
     await expect(this.uploadFilesValidate).toHaveText(filesNames);
+    await expect(this.uploadFilesValidate).toBeVisible();
   }
 
   async downloadFile(downloadPath: string) {
@@ -183,20 +188,25 @@ export class FormsPage extends AppPage {
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  async verifyDisabledTextbox() {
+  async verifyTextboxState(option: { isEnabled: boolean }) {
+    if (option.isEnabled) {
+      await expect(this.disabledTextbox).toBeEnabled();
+    } else {
+      await expect(this.disabledTextbox).toBeDisabled();
+    }
     await expect(this.disabledTextbox).toBeVisible();
-    await expect(this.disabledTextbox).toBeDisabled();
   }
 
   async submitClick() {
     await this.submitBtn.click();
   }
 
-  async verifyValidationErrors(input: string) {
-    await expect(this.errorTooltip(input)).toBeVisible();
-  }
-  async verifyNoValidationErrors(input: string) {
-    await expect(this.errorTooltip(input)).not.toBeVisible();
+  async verifyValidationErrors(input: string, option: { isVisible: boolean }) {
+    if (option.isVisible) {
+      await expect(this.errorTooltip(input)).toBeVisible();
+    } else {
+      await expect(this.errorTooltip(input)).not.toBeVisible();
+    }
   }
 
   async fillCity(city: string) {
