@@ -165,7 +165,8 @@ export class WaitConditionsPage extends AppPage {
   async verifyPopupOpened() {
     await this.popup.expectLoaded();
   }
+
   async clickBtnOnPopup() {
-    await this.popup.openWindowBtn1Click();
+    await this.popup.clickOpenPopupBtn();
   }
 }
