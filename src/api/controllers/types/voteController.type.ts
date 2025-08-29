@@ -7,7 +7,6 @@ export type CreateVoteRequest = {
 export type PartialVoteRequest = Partial<CreateVoteRequest>;
 
 export type CreateVoteResponse = {
-  [x: string]: any;
   message: string;
   id: number;
   image_id: string;
