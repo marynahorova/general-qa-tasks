@@ -31,7 +31,7 @@ test.describe("Vote API tests", () => {
   test("check that image_id is required in adding vote request", async () => {
     const { image_id, ...bodyWithoutImage } = body;
     await expectToThrow(
-      () => voteController.addVote(bodyWithoutImage as PartialVoteRequest),
+      () => voteController.addVote(bodyWithoutImage),
       '"image_id" is required'
     );
   });
@@ -39,7 +39,7 @@ test.describe("Vote API tests", () => {
   test("check that value is required in adding vote request", async () => {
     const { value, ...bodyWithoutValue } = body;
     await expectToThrow(
-      () => voteController.addVote(bodyWithoutValue as PartialVoteRequest),
+      () => voteController.addVote(bodyWithoutValue),
       '"value" is required'
     );
   });
@@ -90,11 +90,8 @@ test.describe("Vote API tests", () => {
 
   test("check creating and getting vote by sub_id", async () => {
     await voteController.addVote(body);
-    const response = (await voteController.getVote(
-      `my-user-${Date.now()}`
-    )) as CreateVoteResponse[];
-    const filterResponse = response.map((obj) => obj.sub_id);
-    expect(filterResponse.every((obj) => obj === body.sub_id)).toBeTruthy();
+    const response = await voteController.getVote(`my-user-${Date.now()}`);
+    expect(response.every((res) => res.sub_id === body.sub_id)).toBeTruthy();
   });
 
   test("check creating and deleting vote", async () => {

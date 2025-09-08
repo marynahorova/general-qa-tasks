@@ -1,7 +1,7 @@
 export type CreateVoteRequest = {
-  image_id: string; // I set it to not required to be able to miss it in test which checks the required field
+  image_id: string;
   sub_id: string;
-  value: any;
+  value: number | string | boolean;
 };
 
 export type PartialVoteRequest = Partial<CreateVoteRequest>;
@@ -12,5 +12,5 @@ export type CreateVoteResponse = {
   image_id: string;
   sub_id: string;
   value: any;
-  country_code: string;
+  country_code: number;
 };

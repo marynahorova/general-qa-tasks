@@ -18,9 +18,7 @@ export class VoteController extends BaseAPI {
     };
   }
 
-  async addVote(
-    data: CreateVoteRequest | PartialVoteRequest
-  ): Promise<CreateVoteResponse> {
+  async addVote(data: PartialVoteRequest): Promise<CreateVoteResponse> {
     const response = await this.request.post(`${this.baseUrl}/votes`, {
       data,
       headers: this.headers(),
@@ -29,7 +27,7 @@ export class VoteController extends BaseAPI {
       const errorMessage = await response.text();
       throw new Error(`${errorMessage}`);
     }
-    return (await response.json()) as CreateVoteResponse;
+    return await response.json();
   }
 
   async getVote(sub_id?: string): Promise<CreateVoteResponse[]> {
@@ -46,7 +44,7 @@ export class VoteController extends BaseAPI {
       const errorMessage = await response.text();
       throw new Error(`${errorMessage}`);
     }
-    return (await response.json()) as CreateVoteResponse[];
+    return await response.json();
   }
 
   async deleteVote(id: number): Promise<{ message: string }> {
@@ -57,6 +55,6 @@ export class VoteController extends BaseAPI {
       const errorMessage = await response.text();
       throw new Error(`${errorMessage}`);
     }
-    return (await response.json()) as { message: string };
+    return await response.json();
   }
 }
