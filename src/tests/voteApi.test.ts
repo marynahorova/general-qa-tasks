@@ -1,9 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { VoteController } from "../api/controllers/voteController";
-import {
-  CreateVoteResponse,
-  PartialVoteRequest,
-} from "../api/controllers/types/voteController.type";
+import { PartialVoteRequest } from "../api/controllers/types/voteController.type";
 import { expectToThrow } from "../utils/testUtils";
 
 test.describe("Vote API tests", () => {

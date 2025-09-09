@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { BrowserContext, expect } from "@playwright/test";
 import { Component } from "../abstract";
 
 export class FrameComponent extends Component {
@@ -13,6 +13,6 @@ export class FrameComponent extends Component {
   }
 
   async verifyBtnTextAfterClick() {
-    await expect(this.frameBtn).toHaveText("Clicked");
+    await this.expectToHaveTextOnElement(this.frameBtn, "Clicked");
   }
 }
