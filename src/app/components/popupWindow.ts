@@ -13,7 +13,7 @@ export class PopupComponent extends Component {
     await this.openPopupBtn.click();
   }
 
-  async clickAndGetNewPage() {
+  async openNewPage() {
     const pagePromise = this.page.waitForEvent("popup");
     await this.clickOpenPopupBtn();
     return new FrameComponent(await pagePromise);
