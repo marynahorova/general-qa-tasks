@@ -14,6 +14,7 @@ export const cases = [
 export enum TEST_FILES {
   CV = "cv.txt",
   CERTIFICATE = "certificate.pdf",
+  IMAGE = "myImg.jpeg",
 }
 
 export enum FORM_FIELDS {

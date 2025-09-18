@@ -1,13 +1,13 @@
-import { test } from "@playwright/test";
-import { WaitConditionsPage } from "../app/pages/waitConditions.page";
-import { FrameComponent } from "../app/components/frame";
+import { openWaitConditionsPageAndSetValues } from "../app/fixtures/testFixtures";
 
-test("check opening multiple windows", async ({ page, context }) => {
-  const waitConditions = new WaitConditionsPage(page);
-  await waitConditions.openPopup();
-  await waitConditions.verifyPopupOpened();
-  const frame = await waitConditions.popup.openNewPage();
-  await frame.expectLoaded();
-  await frame.clickButton();
-  await frame.verifyBtnTextAfterClick();
-});
+openWaitConditionsPageAndSetValues(
+  "check opening multiple windows",
+  async ({ waitConditionsPage }) => {
+    await waitConditionsPage.openPopup();
+    await waitConditionsPage.verifyPopupOpened();
+    const frame = await waitConditionsPage.popup.openNewPage();
+    await frame.expectLoaded();
+    await frame.clickButton();
+    await frame.verifyBtnTextAfterClick();
+  }
+);

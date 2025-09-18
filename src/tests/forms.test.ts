@@ -1,49 +1,48 @@
+import test from "@playwright/test";
 import {
   cases,
   FORM_FIELDS,
   LANGUAGES,
   TEST_FILES,
 } from "../app/constants/testData";
-import { FormsPage } from "../app/pages/forms.page";
-import { test } from "@playwright/test";
+import { openFormsPage } from "../app/fixtures/testFixtures";
 
 test.describe("Forms/Inputs tests", () => {
-  let formsPage: FormsPage;
-
-  test.beforeEach(async ({ page }) => {
-    formsPage = new FormsPage(page);
-    await formsPage.open();
-  });
-
-  test("check setting years of experience", async () => {
+  openFormsPage("check setting years of experience", async ({ formsPage }) => {
     await formsPage.setExperience("1");
     await formsPage.verifyExperience("1");
   });
 
-  test("check disabled checkbox", async () => {
+  openFormsPage("check disabled checkbox", async ({ formsPage }) => {
     await formsPage.verifyCheckBoxState(LANGUAGES.JAVA, { isEnabled: false });
   });
 
-  test("check selecting only Python checkbox", async () => {
-    await formsPage.checkLang(LANGUAGES.PYTHON);
-    await formsPage.verifyLangUnchecked(LANGUAGES.JAVASCRIPT);
-    await formsPage.verifyLangCheckedAndText(LANGUAGES.PYTHON);
-  });
+  openFormsPage(
+    "check selecting only Python checkbox",
+    async ({ formsPage }) => {
+      await formsPage.checkLang(LANGUAGES.PYTHON);
+      await formsPage.verifyLangUnchecked(LANGUAGES.JAVASCRIPT);
+      await formsPage.verifyLangCheckedAndText(LANGUAGES.PYTHON);
+    }
+  );
 
-  test("check selecting only JavaScript checkbox", async () => {
+  openFormsPage(
+    "check selecting only JavaScript checkbox",
+    async ({ formsPage }) => {
+      await formsPage.checkLang(LANGUAGES.JAVASCRIPT);
+      await formsPage.verifyLangUnchecked(LANGUAGES.PYTHON);
+      await formsPage.verifyLangCheckedAndText(LANGUAGES.JAVASCRIPT);
+    }
+  );
+
+  openFormsPage("check selecting two languages", async ({ formsPage }) => {
+    await formsPage.checkLang(LANGUAGES.PYTHON);
     await formsPage.checkLang(LANGUAGES.JAVASCRIPT);
-    await formsPage.verifyLangUnchecked(LANGUAGES.PYTHON);
+    await formsPage.verifyLangCheckedAndText(LANGUAGES.PYTHON);
     await formsPage.verifyLangCheckedAndText(LANGUAGES.JAVASCRIPT);
   });
 
-  test("check selecting two languages", async () => {
-    await formsPage.checkLang(LANGUAGES.PYTHON);
-    await formsPage.checkLang(LANGUAGES.JAVASCRIPT);
-    await formsPage.verifyLangCheckedAndText(LANGUAGES.PYTHON);
-    await formsPage.verifyLangCheckedAndText(LANGUAGES.JAVASCRIPT);
-  });
-
-  test("check selecting radio btn", async () => {
+  openFormsPage("check selecting radio btn", async ({ formsPage }) => {
     const radioBtns = ["Selenium", "Protractor"];
     for (const btn of radioBtns) {
       await formsPage.selectRadioBtn(btn);
@@ -55,30 +54,33 @@ test.describe("Forms/Inputs tests", () => {
     }
   });
 
-  test("check selecting primary skill", async () => {
+  openFormsPage("check selecting primary skill", async ({ formsPage }) => {
     for (const { skill, value } of cases) {
       await formsPage.selectPrimarySkill(skill);
       await formsPage.verifyPrimarySkillText(value);
     }
   });
 
-  test("check selecting language in the listbox", async () => {
-    for (const lang of Object.values(LANGUAGES)) {
-      await formsPage.selectLanguage(lang);
-      await formsPage.verifyLanguageText(lang);
+  openFormsPage(
+    "check selecting language in the listbox",
+    async ({ formsPage }) => {
+      for (const lang of Object.values(LANGUAGES)) {
+        await formsPage.selectLanguage(lang);
+        await formsPage.verifyLanguageText(lang);
+      }
     }
-  });
+  );
 
-  test("check filling text into textbox", async () => {
+  openFormsPage("check filling text into textbox", async ({ formsPage }) => {
     await formsPage.fillText("test");
     await formsPage.verifyText("test");
   });
 
-  test("check readonly field", async () => {
+  openFormsPage("check readonly field", async ({ formsPage }) => {
     await formsPage.verifyReadonlyField();
   });
 
-  test("check speak german toggle", async () => {
+  openFormsPage("check speak german toggle", async ({ formsPage }) => {
     await formsPage.verifyToggleText("");
     await formsPage.clickToggle();
     await formsPage.verifyToggleText("true");
@@ -86,19 +88,19 @@ test.describe("Forms/Inputs tests", () => {
     await formsPage.verifyToggleText("false");
   });
 
-  test("check slider different values", async () => {
+  openFormsPage("check slider different values", async ({ formsPage }) => {
     for (let value = 0; value <= 5; value++) {
       await formsPage.setSliderText(value);
       await formsPage.verifySliderText(value);
     }
   });
 
-  test("check uploading CV", async () => {
+  openFormsPage("check uploading CV", async ({ formsPage }) => {
     await formsPage.uploadCvFile(TEST_FILES.CV);
     await formsPage.verifyCvUpload(TEST_FILES.CV);
   });
 
-  test("check uploading multiple files", async () => {
+  openFormsPage("check uploading multiple files", async ({ formsPage }) => {
     await formsPage.uploadMultipleFiles([
       TEST_FILES.CV,
       TEST_FILES.CERTIFICATE,
@@ -108,49 +110,55 @@ test.describe("Forms/Inputs tests", () => {
     );
   });
 
-  test("check file downloading", async () => {
+  openFormsPage("check file downloading", async ({ formsPage }) => {
     await formsPage.downloadFile("src/downloads");
     await formsPage.verifyDownloadFile("src/downloads");
     await formsPage.cleanDownloads("src/downloads");
   });
 
-  test("check disabled textbox", async () => {
+  openFormsPage("check disabled textbox", async ({ formsPage }) => {
     await formsPage.verifyTextboxState({ isEnabled: false });
   });
 
-  test("check validation errors after submitting empty form", async () => {
-    await formsPage.submitClick();
-    await formsPage.verifyValidationErrors(FORM_FIELDS.CITY, {
-      isVisible: true,
-    });
-    await formsPage.verifyValidationErrors(FORM_FIELDS.STATE, {
-      isVisible: true,
-    });
-    await formsPage.verifyValidationErrors(FORM_FIELDS.ZIP, {
-      isVisible: true,
-    });
-    await formsPage.verifyValidationErrors(FORM_FIELDS.TERMS, {
-      isVisible: true,
-    });
-  });
+  openFormsPage(
+    "check validation errors after submitting empty form",
+    async ({ formsPage }) => {
+      await formsPage.submitClick();
+      await formsPage.verifyValidationErrors(FORM_FIELDS.CITY, {
+        isVisible: true,
+      });
+      await formsPage.verifyValidationErrors(FORM_FIELDS.STATE, {
+        isVisible: true,
+      });
+      await formsPage.verifyValidationErrors(FORM_FIELDS.ZIP, {
+        isVisible: true,
+      });
+      await formsPage.verifyValidationErrors(FORM_FIELDS.TERMS, {
+        isVisible: true,
+      });
+    }
+  );
 
-  test("check submitting form with all fields", async () => {
-    await formsPage.fillCity("City");
-    await formsPage.fillState("State");
-    await formsPage.fillZip(123);
-    await formsPage.agreeTerms();
-    await formsPage.submitClick();
-    await formsPage.verifyValidationErrors(FORM_FIELDS.CITY, {
-      isVisible: false,
-    });
-    await formsPage.verifyValidationErrors(FORM_FIELDS.STATE, {
-      isVisible: false,
-    });
-    await formsPage.verifyValidationErrors(FORM_FIELDS.ZIP, {
-      isVisible: false,
-    });
-    await formsPage.verifyValidationErrors(FORM_FIELDS.TERMS, {
-      isVisible: false,
-    });
-  });
+  openFormsPage(
+    "check submitting form with all fields",
+    async ({ formsPage }) => {
+      await formsPage.fillCity("City");
+      await formsPage.fillState("State");
+      await formsPage.fillZip(123);
+      await formsPage.agreeTerms();
+      await formsPage.submitClick();
+      await formsPage.verifyValidationErrors(FORM_FIELDS.CITY, {
+        isVisible: false,
+      });
+      await formsPage.verifyValidationErrors(FORM_FIELDS.STATE, {
+        isVisible: false,
+      });
+      await formsPage.verifyValidationErrors(FORM_FIELDS.ZIP, {
+        isVisible: false,
+      });
+      await formsPage.verifyValidationErrors(FORM_FIELDS.TERMS, {
+        isVisible: false,
+      });
+    }
+  );
 });
