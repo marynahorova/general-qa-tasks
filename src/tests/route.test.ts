@@ -1,22 +1,23 @@
 import test, { expect } from "@playwright/test";
 import { loginAsAdmin, openFormsPage } from "../app/fixtures/testFixtures";
-import { OrderPage } from "../app/pages/order.page";
 import { TEST_FILES } from "../app/constants/testData";
+import { baseFixture } from "../app/fixtures/baseFixture";
 
 test.describe("Request routing tests", () => {
   openFormsPage(
     "Add and check 'myHeader': `myValue` header to all outcome requests on a page",
-    async ({ formsPage }) => {
+    async ({ formsPage, page }) => {
       await formsPage.addCustomHeader();
+      await page.reload();
       await formsPage.verifyCustomHeaderAdded();
     }
   );
 
   loginAsAdmin(
     "Login and replace pizza image with my image",
-    async ({ loginPage, page }) => {
-      const orderPage = new OrderPage(page);
+    async ({ loginPage, page, orderPage }) => {
       await orderPage.interceptImg(TEST_FILES.IMAGE);
+      await page.reload();
       await page.screenshot({
         path: "screenshots/screenshot1.png",
         fullPage: true,

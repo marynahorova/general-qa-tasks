@@ -235,7 +235,6 @@ export class FormsPage extends AppPage {
   }
 
   async verifyCustomHeaderAdded() {
-    await this.page.reload();
     this.page.on("request", (request) => {
       const headers = request.headers();
       expect(headers).toHaveProperty("myHeader", "myValue");

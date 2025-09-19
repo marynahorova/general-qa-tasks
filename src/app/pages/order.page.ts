@@ -13,12 +13,10 @@ export class OrderPage extends AppPage {
   }
 
   async interceptImg(imgName: string) {
-    await this.page.reload();
     const imgPath = path.join(process.cwd(), "src/test-data", imgName);
     const myImg = fs.readFileSync(imgPath);
-    await this.page.route("**/*", async (route) => {
-      const headers = route.request().headers();
-      if (route.request().resourceType() === "image") {
+    await this.page.route("**/*", async (route, request) => {
+      if (request.resourceType() === "image") {
         await route.fulfill({
           status: 200,
           body: myImg,
@@ -27,6 +25,5 @@ export class OrderPage extends AppPage {
         await route.continue();
       }
     });
-    await this.page.reload();
   }
 }
