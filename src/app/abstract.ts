@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 export abstract class PageHolder {
   constructor(protected page: Page) {}
@@ -6,6 +6,10 @@ export abstract class PageHolder {
 
 export abstract class Component extends PageHolder {
   abstract expectLoaded(): Promise<void>;
+
+  async expectToHaveTextOnElement(locator: Locator, text: string) {
+    await expect(locator).toHaveText(text);
+  }
 }
 
 export abstract class AppPage extends Component {
