@@ -1,74 +1,96 @@
 import { test, expect } from "@playwright/test";
-import { WaitConditionsPage } from "../app/pages/waitConditions.page";
+import { openWaitConditionsPageAndSetValues } from "../app/fixtures/testFixtures";
 
 test.describe("Wait Condition Tests", () => {
-  let waitConditions: WaitConditionsPage;
+  openWaitConditionsPageAndSetValues(
+    "check min/max values are set correctly",
+    async ({ waitConditionsPage }) => {
+      const minMaxValues = await waitConditionsPage.getMinMaxValues();
+      expect(minMaxValues).toStrictEqual({ minValue: "2", maxValue: "4" });
+    }
+  );
 
-  test.beforeEach(async ({ page }) => {
-    waitConditions = new WaitConditionsPage(page);
-    await waitConditions.open();
-    await waitConditions.setMinMaxValues(2, 4);
-  });
+  openWaitConditionsPageAndSetValues(
+    "check triggering alert",
+    async ({ page, waitConditionsPage }) => {
+      await waitConditionsPage.triggerAlert();
+      page.on("dialog", async (dialog) => {
+        await dialog.accept();
+      });
+      await waitConditionsPage.verifyAlert();
+    }
+  );
 
-  test("check min/max values are set correctly", async () => {
-    const minMaxValues = await waitConditions.getMinMaxValues();
-    expect(minMaxValues).toStrictEqual({ minValue: "2", maxValue: "4" });
-  });
+  openWaitConditionsPageAndSetValues(
+    "check triggering prompt and accepting it",
+    async ({ page, waitConditionsPage }) => {
+      await waitConditionsPage.triggerPrompt();
+      page.on("dialog", async (dialog) => {
+        await dialog.accept();
+      });
+      await waitConditionsPage.verifySuccessPrompt();
+    }
+  );
 
-  test("check triggering alert", async ({ page }) => {
-    await waitConditions.triggerAlert();
-    page.on("dialog", async (dialog) => {
-      await dialog.accept();
-    });
-    await waitConditions.verifyAlert();
-  });
+  openWaitConditionsPageAndSetValues(
+    "check triggering prompt and canceling it",
+    async ({ page, waitConditionsPage }) => {
+      await waitConditionsPage.triggerPrompt();
+      page.on("dialog", async (dialog) => {
+        await dialog.dismiss();
+      });
+      await waitConditionsPage.verifyCanceledPrompt();
+    }
+  );
 
-  test("check triggering prompt and accepting it", async ({ page }) => {
-    await waitConditions.triggerPrompt();
-    page.on("dialog", async (dialog) => {
-      await dialog.accept();
-    });
-    await waitConditions.verifySuccessPrompt();
-  });
+  openWaitConditionsPageAndSetValues(
+    "check triggering button visibility and click on it",
+    async ({ waitConditionsPage }) => {
+      await waitConditionsPage.triggerVisibleElement();
+      await waitConditionsPage.verifyVisibleBtn();
+      await waitConditionsPage.clickVisibleBtn();
+      await waitConditionsPage.verifyPopup();
+    }
+  );
 
-  test("check triggering prompt and canceling it", async ({ page }) => {
-    await waitConditions.triggerPrompt();
-    page.on("dialog", async (dialog) => {
-      await dialog.dismiss();
-    });
-    await waitConditions.verifyCanceledPrompt();
-  });
+  openWaitConditionsPageAndSetValues(
+    "check triggering element invisibility",
+    async ({ waitConditionsPage }) => {
+      await waitConditionsPage.triggerInvisibleElement();
+      await waitConditionsPage.verifySpinnerHidden();
+    }
+  );
 
-  test("check triggering button visibility and click on it", async () => {
-    await waitConditions.triggerVisibleElement();
-    await waitConditions.verifyVisibleBtn();
-    await waitConditions.clickVisibleBtn();
-    await waitConditions.verifyPopup();
-  });
+  openWaitConditionsPageAndSetValues(
+    "check triggering button enabling",
+    async ({ waitConditionsPage }) => {
+      await waitConditionsPage.triggerEnabledElement();
+      await waitConditionsPage.verifyElementEnabled();
+    }
+  );
 
-  test("check triggering element invisibility", async () => {
-    await waitConditions.triggerInvisibleElement();
-    await waitConditions.verifySpinnerHidden();
-  });
+  openWaitConditionsPageAndSetValues(
+    "check changing page title",
+    async ({ waitConditionsPage }) => {
+      await waitConditionsPage.triggerNewPageTitle();
+      await waitConditionsPage.verifyNewPageTitle();
+    }
+  );
 
-  test("check triggering button enabling", async () => {
-    await waitConditions.triggerEnabledElement();
-    await waitConditions.verifyElementEnabled();
-  });
-
-  test("check changing page title", async () => {
-    await waitConditions.triggerNewPageTitle();
-    await waitConditions.verifyNewPageTitle();
-  });
-
-  test("check text/value to have specific values", async () => {
-    await waitConditions.triggerTextInput();
-    const value = await waitConditions.getInputValue("Dennis Ritchie");
-    expect(value).toBe("Dennis Ritchie");
-    await waitConditions.verifyBtnCaption();
-  });
-  test("check triggering frame", async () => {
-    await waitConditions.triggerFrame();
-    await waitConditions.verifyFrameAndBtn();
-  });
+  openWaitConditionsPageAndSetValues(
+    "check text/value to have specific values",
+    async ({ waitConditionsPage }) => {
+      await waitConditionsPage.triggerTextInput();
+      const value = await waitConditionsPage.getInputValue("Dennis Ritchie");
+      expect(value).toBe("Dennis Ritchie");
+      await waitConditionsPage.verifyBtnCaption();
+    }
+  );
+  openWaitConditionsPageAndSetValues(
+    "check triggering frame",
+    async ({ waitConditionsPage }) => {
+      await waitConditionsPage.triggerFrame();
+      await waitConditionsPage.verifyFrameAndBtn();
+    }
+  );
 });

@@ -44,6 +44,7 @@ export class FormsPage extends AppPage {
   private termsCheck = this.page.locator("#invalidCheck");
   private submitBtn = this.page.getByText("Submit Form");
   private errorTooltip = (input) => this.page.locator(`#invalid_${input}`);
+  private body = this.page.locator("body");
 
   //Here I provided methods for interacting with elements on the Forms page:
   async expectLoaded(): Promise<void> {
@@ -220,5 +221,42 @@ export class FormsPage extends AppPage {
   }
   async agreeTerms() {
     await this.termsCheck.click();
+  }
+
+  //Methods for the route tests
+  async addCustomHeader() {
+    await this.page.route("**/*", async (route, request) => {
+      const headers = {
+        ...request.headers(),
+        myHeader: "myValue",
+      };
+      await route.continue({ headers });
+    });
+  }
+
+  async verifyCustomHeaderAdded() {
+    this.page.on("request", (request) => {
+      const headers = request.headers();
+      expect(headers).toHaveProperty("myHeader", "myValue");
+    });
+  }
+
+  async emulate404Error() {
+    await this.page.route("**/*", async (route) => {
+      if (route.request().resourceType() === "document") {
+        await route.fulfill({
+          status: 404,
+          body: "Emulated 404 Error",
+        });
+      } else {
+        await route.continue();
+      }
+    });
+  }
+
+  async verifyEmulatedError() {
+    const response = await this.page.reload();
+    expect(response?.status()).toBe(404);
+    await expect(this.body).toContainText("Emulated 404 Error");
   }
 }
